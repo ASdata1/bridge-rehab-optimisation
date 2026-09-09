@@ -78,7 +78,7 @@ def clean(df_raw: pd.DataFrame) -> pd.DataFrame:
     # (see src/risk_model.py).
     df["is_nhs"] = df_raw["NATIONAL_NETWORK_110"] == "1"
 
-    # Kept for EDA / context, not used directly in the optimisation.
+    # Kept for EDA
     df["year_built"] = pd.to_numeric(df_raw["YEAR_BUILT_027"], errors="coerce")
     df["functional_class"] = df_raw["FUNCTIONAL_CLASS_026"]
     df["owner_code"] = df_raw["OWNER_022"]
