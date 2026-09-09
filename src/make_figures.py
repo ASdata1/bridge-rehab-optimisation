@@ -117,7 +117,7 @@ def optimal_vs_baseline() -> None:
         "for the same budget",
         fontsize=12, color=TEXT_PRIMARY,
     )
-    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig(FIG_DIR / "optimal_vs_baseline.png", dpi=160)
     plt.close(fig)
 

@@ -23,12 +23,14 @@ discussion with Aman in-conversation, and the README "Shadow price" section):
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 import pandas as pd
 
 from src.optimise import solve_lp_relaxation, solve_milp
 
 
-def lp_shadow_prices(df: pd.DataFrame, T: int, budget_per_year: list[float]) -> pd.DataFrame:
+def lp_shadow_prices(df: pd.DataFrame, T: int, budget_per_year: Sequence[float]) -> pd.DataFrame:
     result = solve_lp_relaxation(df, T, budget_per_year)
     rows = []
     for t in range(1, T + 1):
@@ -45,22 +47,25 @@ def lp_shadow_prices(df: pd.DataFrame, T: int, budget_per_year: list[float]) -> 
 def budget_sweep(
     df: pd.DataFrame,
     T: int,
-    budget_levels: list[float],
+    budget_levels: Sequence[float],
     equal_per_year: bool = True,
 ) -> pd.DataFrame:
     """Re-solve the MILP at each total-budget level in `budget_levels` (split evenly
     across the T years) and report the achieved objective, plus the empirical
     marginal value of the budget step from the previous level.
     """
+    if not equal_per_year:
+        raise NotImplementedError("budget_sweep currently only supports equal_per_year=True")
+
     rows = []
     prev_total = None
     prev_obj = None
     for total_budget in budget_levels:
-        per_year = [total_budget / T] * T if equal_per_year else None
+        per_year = [total_budget / T] * T
         result = solve_milp(df, T, per_year)
         obj = result.objective_value
         marginal = None
-        if prev_total is not None and total_budget > prev_total:
+        if prev_total is not None and prev_obj is not None and total_budget > prev_total:
             marginal = (obj - prev_obj) / (total_budget - prev_total)
         rows.append({
             "total_budget": total_budget,

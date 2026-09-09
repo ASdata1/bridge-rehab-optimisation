@@ -12,10 +12,12 @@ what actually solving the allocation problem gets you for the same money.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 import pandas as pd
 
 
-def worst_condition_first(df: pd.DataFrame, T: int, budget_per_year: list[float]) -> pd.DataFrame:
+def worst_condition_first(df: pd.DataFrame, T: int, budget_per_year: Sequence[float]) -> pd.DataFrame:
     ranked = df.sort_values(["lowest_rating", "risk_untreated"], ascending=[True, False]).copy()
 
     rows = []

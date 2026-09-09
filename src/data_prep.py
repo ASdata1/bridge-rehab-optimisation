@@ -102,7 +102,7 @@ def main() -> None:
     df_raw = load_raw()
     df_clean = clean(df_raw)
     PROCESSED_PATH.parent.mkdir(parents=True, exist_ok=True)
-    df_clean.to_csv(PROCESSED_PATH, index=False)
+    df_clean.to_csv(PROCESSED_PATH, index=False, lineterminator="\n")
     print(f"[data_prep] wrote {len(df_clean)} rows to {PROCESSED_PATH}")
 
 

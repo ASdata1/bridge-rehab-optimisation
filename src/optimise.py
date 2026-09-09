@@ -40,6 +40,7 @@ Constraints
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 import pandas as pd
@@ -57,7 +58,7 @@ class OptimiseResult:
 def _build_problem(
     df: pd.DataFrame,
     T: int,
-    budget_per_year: list[float],
+    budget_per_year: Sequence[float],
     integer: bool,
 ) -> tuple[pulp.LpProblem, dict]:
     assert len(budget_per_year) == T, "budget_per_year must have one entry per year"
@@ -98,7 +99,7 @@ def _build_problem(
 def solve_milp(
     df: pd.DataFrame,
     T: int,
-    budget_per_year: list[float],
+    budget_per_year: Sequence[float],
     mip_gap: float = 0.01,
     time_limit: int = 60,
 ) -> OptimiseResult:
@@ -129,7 +130,7 @@ def solve_milp(
     )
 
 
-def solve_lp_relaxation(df: pd.DataFrame, T: int, budget_per_year: list[float]) -> OptimiseResult:
+def solve_lp_relaxation(df: pd.DataFrame, T: int, budget_per_year: Sequence[float]) -> OptimiseResult:
     """Solve the continuous relaxation (x in [0,1]) so we can read off the shadow
     price (dual value) on each year's budget constraint -- see src/sensitivity.py.
     """

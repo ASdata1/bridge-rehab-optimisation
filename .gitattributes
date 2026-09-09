@@ -1,0 +1,5 @@
+# Normalise line endings: store everything with LF in the repo, regardless of the
+# OS the pipeline is run on. pandas' to_csv writes CRLF on Windows otherwise, which
+# would show every regenerated data/processed/*.csv as fully modified.
+* text=auto eol=lf
+*.png binary
