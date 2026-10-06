@@ -1,0 +1,104 @@
+section,plan,group,metric,value
+county,optimal,Bristol,bridges_selected,1
+county,optimal,Bristol,spend_usd,1310269.310868
+county,optimal,Bristol,risk_reduction,45.61576985804462
+county,optimal,Bristol,share_of_spend,0.01315415304205277
+county,optimal,Bristol,share_of_risk_reduction,0.010148024715123539
+county,optimal,Bristol,share_of_untreated_risk,0.012428327455597405
+county,optimal,Bristol,bridges_in_county,10
+county,optimal,Kent,bridges_selected,18
+county,optimal,Kent,spend_usd,11854384.035381999
+county,optimal,Kent,risk_reduction,517.1693154562433
+county,optimal,Kent,share_of_spend,0.11900941320023876
+county,optimal,Kent,share_of_risk_reduction,0.11505334693431504
+county,optimal,Kent,share_of_untreated_risk,0.1529198085259817
+county,optimal,Kent,bridges_in_county,115
+county,optimal,Newport,bridges_selected,5
+county,optimal,Newport,spend_usd,3467859.267222
+county,optimal,Newport,risk_reduction,156.68542230978574
+county,optimal,Newport,share_of_spend,0.034814790479309875
+county,optimal,Newport,share_of_risk_reduction,0.034857408809441805
+county,optimal,Newport,share_of_untreated_risk,0.049166548818820384
+county,optimal,Newport,bridges_in_county,37
+county,optimal,Providence,bridges_selected,98
+county,optimal,Providence,spend_usd,62613118.264774
+county,optimal,Providence,risk_reduction,2838.8589781291776
+county,optimal,Providence,share_of_spend,0.6285902701555075
+county,optimal,Providence,share_of_risk_reduction,0.6315537622725145
+county,optimal,Providence,share_of_untreated_risk,0.6158069187748528
+county,optimal,Providence,bridges_in_county,480
+county,optimal,Washington,bridges_selected,39
+county,optimal,Washington,spend_usd,20363162.381128
+county,optimal,Washington,risk_reduction,936.7098089445361
+county,optimal,Washington,share_of_spend,0.204431373122891
+county,optimal,Washington,share_of_risk_reduction,0.20838745726860514
+county,optimal,Washington,share_of_untreated_risk,0.1696783964247478
+county,optimal,Washington,bridges_in_county,145
+county,baseline,Bristol,bridges_selected,1
+county,baseline,Bristol,spend_usd,1310269.310868
+county,baseline,Bristol,risk_reduction,45.61576985804462
+county,baseline,Bristol,share_of_spend,0.013143465382920374
+county,baseline,Bristol,share_of_risk_reduction,0.029662788122765828
+county,baseline,Bristol,share_of_untreated_risk,0.012428327455597405
+county,baseline,Bristol,bridges_in_county,10
+county,baseline,Kent,bridges_selected,11
+county,baseline,Kent,spend_usd,41102671.17852
+county,baseline,Kent,risk_reduction,479.7185415110921
+county,baseline,Kent,share_of_spend,0.4123057231818666
+county,baseline,Kent,share_of_risk_reduction,0.3119489049442461
+county,baseline,Kent,share_of_untreated_risk,0.1529198085259817
+county,baseline,Kent,bridges_in_county,115
+county,baseline,Newport,bridges_selected,1
+county,baseline,Newport,spend_usd,346132.148964
+county,baseline,Newport,risk_reduction,47.55808548241829
+county,baseline,Newport,share_of_spend,0.0034720922485854426
+county,baseline,Newport,share_of_risk_reduction,0.030925827133455094
+county,baseline,Newport,share_of_untreated_risk,0.049166548818820384
+county,baseline,Newport,bridges_in_county,37
+county,baseline,Providence,bridges_selected,19
+county,baseline,Providence,spend_usd,54302695.77655999
+county,baseline,Providence,risk_reduction,850.001305579821
+county,baseline,Providence,share_of_spend,0.5447167206149846
+county,baseline,Providence,share_of_risk_reduction,0.5527344755980704
+county,baseline,Providence,share_of_untreated_risk,0.6158069187748528
+county,baseline,Providence,bridges_in_county,480
+county,baseline,Washington,bridges_selected,3
+county,baseline,Washington,spend_usd,2628022.115572
+county,baseline,Washington,risk_reduction,114.91756700337672
+county,baseline,Washington,share_of_spend,0.026361998571642908
+county,baseline,Washington,share_of_risk_reduction,0.0747280042014626
+county,baseline,Washington,share_of_untreated_risk,0.1696783964247478
+county,baseline,Washington,bridges_in_county,145
+morans_i,none,untreated,I,0.0818829450134131
+morans_i,none,untreated,expected_I,-0.001272264631043257
+morans_i,none,untreated,p_value,0.001
+morans_i,optimal,remaining after optimal,I,0.2018130701927534
+morans_i,optimal,remaining after optimal,expected_I,-0.001272264631043257
+morans_i,optimal,remaining after optimal,p_value,0.001
+morans_i,baseline,remaining after baseline,I,0.08780349371397757
+morans_i,baseline,remaining after baseline,expected_I,-0.001272264631043257
+morans_i,baseline,remaining after baseline,p_value,0.001
+hotspots,optimal,eps=2000,n_clusters,5
+hotspots,optimal,eps=2000,cluster_sizes,22 11 8 6 4
+hotspots,optimal,eps=2000,n_noise,28
+hotspots,optimal,eps=2000,n_top,79
+hotspots,optimal,eps=3000,n_clusters,1
+hotspots,optimal,eps=3000,cluster_sizes,54
+hotspots,optimal,eps=3000,n_noise,25
+hotspots,optimal,eps=3000,n_top,79
+hotspots,optimal,eps=5000,n_clusters,2
+hotspots,optimal,eps=5000,cluster_sizes,57 9
+hotspots,optimal,eps=5000,n_noise,13
+hotspots,optimal,eps=5000,n_top,79
+hotspots,baseline,eps=2000,n_clusters,3
+hotspots,baseline,eps=2000,cluster_sizes,24 8 5
+hotspots,baseline,eps=2000,n_noise,42
+hotspots,baseline,eps=2000,n_top,79
+hotspots,baseline,eps=3000,n_clusters,2
+hotspots,baseline,eps=3000,cluster_sizes,49 5
+hotspots,baseline,eps=3000,n_noise,25
+hotspots,baseline,eps=3000,n_top,79
+hotspots,baseline,eps=5000,n_clusters,2
+hotspots,baseline,eps=5000,cluster_sizes,51 12
+hotspots,baseline,eps=5000,n_noise,16
+hotspots,baseline,eps=5000,n_top,79
