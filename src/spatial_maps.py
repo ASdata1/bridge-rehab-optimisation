@@ -4,13 +4,17 @@ Static maps of Rhode Island bridges: where the risk is, and where each plan spen
 Plain longitude/latitude scatter (no basemap) with an equal aspect ratio scaled
 by cos(latitude), so distances look right at Rhode Island's latitude.
 
+Also writes figures/bridge_plan_map.html, an interactive folium map.
+
 Run: python -m src.spatial_maps
 """
 
 from __future__ import annotations
 
+import html
 import math
 
+import folium
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -112,10 +116,68 @@ def optimal_by_year(df: pd.DataFrame) -> None:
     _save(fig, "optimal_by_year.png")
 
 
+def _popup(r: pd.Series) -> str:
+    """HTML popup for one bridge. Text from the file is escaped so odd characters can't break the page."""
+    def year(col: str) -> str:
+        return f"year {int(r[col])}" if pd.notna(r[col]) else "not selected"
+
+    adt = f"{r['adt']:,.0f}" + (" (imputed)" if r["adt_imputed"] else "")
+    return (
+        f"<b>{html.escape(r['structure_number'])}</b><br>"
+        f"Route: {html.escape(str(r['route']))}<br>"
+        f"Condition: {html.escape(str(r['bridge_condition']))} (lowest rating {int(r['lowest_rating'])})<br>"
+        f"Traffic (ADT): {adt}<br>"
+        f"Cost: ${r['cost_usd'] / 1e6:,.2f}M<br>"
+        f"Optimal plan: {year('optimal_year')}<br>"
+        f"Baseline plan: {year('baseline_year')}"
+    )
+
+
+def interactive_map(df: pd.DataFrame) -> None:
+    """Folium map: points coloured by plan category, with toggleable optimal / baseline layers.
+
+    A bridge picked by both plans sits in both layers (same colour), so either
+    layer alone shows everything that plan treats.
+    """
+    m = folium.Map(tiles=None)
+    folium.TileLayer("OpenStreetMap", control=False).add_to(m)  # base tiles; not a toggle
+    layers = {
+        "Optimal plan picks": df["optimal_year"].notna(),
+        "Baseline plan picks": df["baseline_year"].notna(),
+        "Not selected by either plan": df["plan"] == "neither",
+    }
+    for name, mask in layers.items():
+        group = folium.FeatureGroup(name=f"{name} ({int(mask.sum())})", show=True)
+        for _, r in df[mask].iterrows():
+            colour = PLAN_COLOURS[r["plan"]]
+            folium.CircleMarker(
+                location=[r["lat"], r["lon"]],
+                radius=3 if r["plan"] == "neither" else 6,
+                color=colour, fill=True, fill_color=colour, fill_opacity=0.85, weight=1,
+                popup=folium.Popup(_popup(r), max_width=280),
+            ).add_to(group)
+        group.add_to(m)
+    m.fit_bounds([[df["lat"].min(), df["lon"].min()], [df["lat"].max(), df["lon"].max()]])
+    folium.LayerControl(collapsed=False).add_to(m)
+
+    counts = df["plan"].value_counts()
+    rows = "".join(
+        f'<div><span style="color:{PLAN_COLOURS[p]}">&#9679;</span> {p} ({counts.get(p, 0)})</div>'
+        for p in PLAN_LABELS
+    )
+    legend = (
+        '<div style="position:fixed;bottom:24px;left:24px;z-index:9999;background:white;'
+        'padding:8px 12px;border:1px solid #ccc;border-radius:4px;font-size:13px">'
+        f"<b>Which plan treats it</b>{rows}</div>"
+    )
+    m.get_root().html.add_child(folium.Element(legend))
+    m.save(FIG_DIR / "bridge_plan_map.html")
+
+
 def main() -> None:
     FIG_DIR.mkdir(exist_ok=True)
     df = pd.read_csv(PROCESSED_DIR / "bridges_geo.csv", dtype={"structure_number": str})
-    for fn in (risk_map, plan_comparison, plan_difference, optimal_by_year):
+    for fn in (risk_map, plan_comparison, plan_difference, optimal_by_year, interactive_map):
         fn(df)
         print(f"wrote {fn.__name__}")
 
