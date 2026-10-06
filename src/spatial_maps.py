@@ -31,6 +31,13 @@ PLAN_COLOURS = {
     "baseline only": ORANGE,
     "neither": GREY,
 }
+# Interactive map only: darker, higher-contrast colours that stay visible on the street tiles.
+MAP_COLOURS = {
+    "both": "#1f4fb3",
+    "optimal only": "#1b7a2f",
+    "baseline only": "#b3261e",
+    "neither": "#e0a800",
+}
 YEAR_COLOURS = ["#fde725", "#7ad151", "#22a884", "#2a788e", "#414487"]  # viridis, years 1-5
 DPI = 200
 
@@ -149,11 +156,11 @@ def interactive_map(df: pd.DataFrame) -> None:
     for name, mask in layers.items():
         group = folium.FeatureGroup(name=f"{name} ({int(mask.sum())})", show=True)
         for _, r in df[mask].iterrows():
-            colour = PLAN_COLOURS[r["plan"]]
+            colour = MAP_COLOURS[r["plan"]]
             folium.CircleMarker(
                 location=[r["lat"], r["lon"]],
                 radius=3 if r["plan"] == "neither" else 6,
-                color=colour, fill=True, fill_color=colour, fill_opacity=0.85, weight=1,
+                color="#333333", fill=True, fill_color=colour, fill_opacity=0.9, weight=1,  # thin dark outline keeps pale dots visible
                 popup=folium.Popup(_popup(r), max_width=280),
             ).add_to(group)
         group.add_to(m)
@@ -162,7 +169,7 @@ def interactive_map(df: pd.DataFrame) -> None:
 
     counts = df["plan"].value_counts()
     rows = "".join(
-        f'<div><span style="color:{PLAN_COLOURS[p]}">&#9679;</span> {p} ({counts.get(p, 0)})</div>'
+        f'<div><span style="color:{MAP_COLOURS[p]}">&#9679;</span> {p} ({counts.get(p, 0)})</div>'
         for p in PLAN_LABELS
     )
     legend = (
