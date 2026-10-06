@@ -175,9 +175,7 @@ proportion to each county's share of the risk, while the worst-condition rule pu
 
 The optimisation says which bridges to fix. This section asks a different question
 about the same two plans: **where on the map does each one spend the money, and where
-is the risk that is left over?** The answer could easily have been "no pattern", and
-the numbers below are reported either way.
-
+is the risk that is left over?** 
 ### How the coordinates were decoded
 
 The inventory does not store latitude and longitude as decimal degrees. It stores them
@@ -188,7 +186,7 @@ longitude `071193090` is 71 degrees 19 minutes 30.90 seconds west, which is
 -71.32525. A string of the wrong length, or with a non-digit in it, would decode to
 the wrong place without any error, so the decoder rejects anything that is not exactly
 the right number of digits (and any minutes or seconds of 60 or more). All 787 bridges
-decoded, none failed, and every point falls inside a box around Rhode Island. The
+decoded, and every point falls inside a box around Rhode Island. The
 decoded points are joined to the scored bridge table on the structure number, treated
 as text (some have leading zeros or stray spaces), giving
 `data/processed/bridges_geo.csv`. County names are added by me from the FIPS codes
@@ -224,7 +222,7 @@ neither (615).*
 
 An interactive version, with a popup for every bridge and a switch for each plan, is
 in `figures/bridge_plan_map.html`. It needs an internet connection: the map tiles and
-the JavaScript libraries it uses are loaded from public servers.
+the JavaScript libraries it uses are loaded from public servers - This
 
 ### County shares
 
@@ -285,18 +283,6 @@ two plans leave a similar picture: one large group holding most of the 79 bridge
 (54 and 57 for the optimal plan, 49 and 51 for the baseline). The 2,000 m result is
 more fragmented.
 
-### What this does and does not show
-
-- It describes where each plan puts the money. It does not explain why the risk is
-  where it is, and a county share is not a fairness verdict.
-- One small state with five counties, so the county table is coarse; Bristol has 10
-  bridges.
-- The spatial statistics use straight-line distance between bridges, not distance
-  along roads. Coordinates are as recorded in the inventory.
-- The choice of 8 neighbours is a common default and was not tested against other
-  values, and the choice of 3,000 m for the hotspot grouping is a judgement call.
-- Risk reduction in the county table is the one-off reduction per treated bridge, so
-  it is a different measure from the risk-years in the headline results above.
 
 ## How to run
 
