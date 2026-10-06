@@ -29,6 +29,8 @@ from src.data_prep import clean, load_raw
 from src.optimise import solve_milp
 from src.risk_model import add_risk_and_cost
 from src.sensitivity import budget_sweep, lp_shadow_prices
+from src.spatial_analysis import main as spatial_analysis_main
+from src.spatial_data import main as spatial_data_main
 
 PROCESSED_DIR = Path(__file__).resolve().parent.parent / "data" / "processed"
 
@@ -85,7 +87,14 @@ def main() -> None:
     sweep.to_csv(PROCESSED_DIR / "budget_sweep.csv", index=False, lineterminator="\n")
     print(f"[run_all] budget_sweep\n{sweep.to_string(index=False)}")
 
-    print(f"[run_all] done -- wrote 5 files to {PROCESSED_DIR}. "
+    # 6. Geospatial chapter: decode coordinates and attach plan membership, then the
+    #    county / Moran's I / hotspot statistics. Reads files written above.
+    print("[run_all] spatial: bridges_geo.csv")
+    spatial_data_main()
+    print("[run_all] spatial: spatial_summary.csv")
+    spatial_analysis_main()
+
+    print(f"[run_all] done -- wrote 7 files to {PROCESSED_DIR}. "
           "Next: python -m src.make_figures")
 
 

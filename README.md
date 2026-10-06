@@ -166,13 +166,146 @@ the price of not being able to fund a fraction of a bridge.
 
 ![Budget vs risk reduction](figures/budget_vs_risk_reduction.png)
 
+On the map (see "Where the money goes" below), the two plans overlap on only 24
+bridges. The optimal plan spreads its spending across the five counties roughly in
+proportion to each county's share of the risk, while the worst-condition rule puts
+41% of its budget into Kent, which holds 15% of the risk.
+
+## Where the money goes
+
+The optimisation says which bridges to fix. This section asks a different question
+about the same two plans: **where on the map does each one spend the money, and where
+is the risk that is left over?** The answer could easily have been "no pattern", and
+the numbers below are reported either way.
+
+### How the coordinates were decoded
+
+The inventory does not store latitude and longitude as decimal degrees. It stores them
+as fixed-width digit strings: latitude is 8 digits `DDMMSSss` and longitude is 9
+digits `DDDMMSSss`, where the last two digits are hundredths of a second. For example
+latitude `41302330` is 41 degrees, 30 minutes, 23.30 seconds, which is 41.50647, and
+longitude `071193090` is 71 degrees 19 minutes 30.90 seconds west, which is
+-71.32525. A string of the wrong length, or with a non-digit in it, would decode to
+the wrong place without any error, so the decoder rejects anything that is not exactly
+the right number of digits (and any minutes or seconds of 60 or more). All 787 bridges
+decoded, none failed, and every point falls inside a box around Rhode Island. The
+decoded points are joined to the scored bridge table on the structure number, treated
+as text (some have leading zeros or stray spaces), giving
+`data/processed/bridges_geo.csv`. County names are added by me from the FIPS codes
+(001 Bristol, 003 Kent, 005 Newport, 007 Providence, 009 Washington); the inventory
+file only contains the code.
+
+Distances are measured in metres in a projected coordinate system (UTM zone 19N,
+EPSG:32619), not in degrees, because a degree of longitude is shorter than a degree of
+latitude at this latitude, so distances in degrees would be distorted.
+
+### Which plan treats which bridge
+
+The two plans overlap on only 24 bridges. The optimal plan treats 137 more that the
+baseline does not, and the baseline treats 11 that the optimal plan does not. The
+other 615 are treated by neither.
+
+![Untreated risk](figures/risk_map.png)
+
+*Untreated risk score of every bridge. Colour is capped at the 98th percentile.*
+
+![Which plan treats each bridge](figures/plan_difference.png)
+
+*Green: both plans (24). Blue: optimal only (137). Orange: baseline only (11). Grey:
+neither (615).*
+
+![Optimal and baseline picks](figures/plan_comparison.png)
+
+*The same picks drawn separately for each plan, over the untouched bridges in grey.*
+
+![Optimal plan by year](figures/optimal_by_year.png)
+
+*Year of treatment in the optimal plan: 55, 31, 28, 23 and 24 bridges in years 1 to 5.*
+
+An interactive version, with a popup for every bridge and a switch for each plan, is
+in `figures/bridge_plan_map.html`. It needs an internet connection: the map tiles and
+the JavaScript libraries it uses are loaded from public servers.
+
+### County shares
+
+Share of each plan's spend, against the county's share of all untreated risk:
+
+| County (bridges) | Share of untreated risk | Optimal: share of spend | Baseline: share of spend |
+|---|---|---|---|
+| Providence (480) | 61.6% | 62.9% | 54.5% |
+| Washington (145) | 17.0% | 20.4% | 2.6% |
+| Kent (115) | 15.3% | 11.9% | 41.2% |
+| Newport (37) | 4.9% | 3.5% | 0.3% |
+| Bristol (10) | 1.2% | 1.3% | 1.3% |
+
+The optimal plan's spend is spread roughly in line with where the risk is: every
+county is within 3.5 percentage points. The largest gaps are Washington, 3.5 points
+above its share of the risk (20.4% of spend against 17.0%), and Kent, 3.4 points below
+(11.9% against 15.3%). The worst-condition rule puts 41.2% of its spend into Kent, on
+11 bridges, and 2.6% into Washington. Because the baseline treats only 35
+bridges, a few expensive ones dominate these shares. The full table, including risk
+reduction per county, is in `data/processed/spatial_summary.csv`.
+
+### Is the risk clustered?
+
+Moran's I measures whether bridges with high values tend to sit near other bridges
+with high values. Here "near" means the 8 nearest bridges by distance in metres, each
+weighted equally. A value of 0 means no pattern, and the value expected under no
+pattern here is -0.001. A value of 1 would mean perfect clustering. The p-value comes
+from shuffling the values among the bridges 999 times and counting how often a shuffle
+looks at least as clustered as the real data. 0.001 is the smallest value that 999
+shuffles can give.
+
+| Risk | Moran's I | p |
+|---|---|---|
+| Untreated | 0.082 | 0.001 |
+| Remaining after the baseline plan | 0.088 | 0.001 |
+| Remaining after the optimal plan | 0.202 | 0.001 |
+
+All three are clustered more than chance would give, but weakly. After the optimal
+plan the remaining risk is more clustered (0.202) than it was before (0.082). This
+says that high-risk bridges tend to have high-risk neighbours; it does not say where
+the clusters are or why they exist.
+
+### Where is the leftover risk?
+
+Taking the 79 bridges (10%) with the highest remaining risk after each plan and
+grouping those that lie close together (DBSCAN, at least 5 bridges within 3,000 m):
+
+| Plan | Clusters | Cluster sizes | Bridges not in a cluster |
+|---|---|---|---|
+| Optimal | 1 | 54 | 25 of 79 |
+| Baseline | 2 | 49 and 5 | 25 of 79 |
+
+The 3,000 m distance was chosen by me after comparing 2,000, 3,000 and 5,000 m. At
+2,000 m the groups split into smaller pieces (5 clusters for the optimal plan, 3 for
+the baseline) and at 5,000 m they merge (2 clusters for each plan, with 13 and 16
+bridges unclustered). All three are in `spatial_summary.csv`. At 3,000 m and 5,000 m the
+two plans leave a similar picture: one large group holding most of the 79 bridges
+(54 and 57 for the optimal plan, 49 and 51 for the baseline). The 2,000 m result is
+more fragmented.
+
+### What this does and does not show
+
+- It describes where each plan puts the money. It does not explain why the risk is
+  where it is, and a county share is not a fairness verdict.
+- One small state with five counties, so the county table is coarse; Bristol has 10
+  bridges.
+- The spatial statistics use straight-line distance between bridges, not distance
+  along roads. Coordinates are as recorded in the inventory.
+- The choice of 8 neighbours is a common default and was not tested against other
+  values, and the choice of 3,000 m for the hotspot grouping is a judgement call.
+- Risk reduction in the county table is the one-off reduction per treated bridge, so
+  it is a different measure from the risk-years in the headline results above.
+
 ## How to run
 
 ```bash
 pip install -r requirements.txt
 python -m src.run_all        # raw data -> scored bridges, optimised plan, baseline, budget sweep
-python -m pytest tests/ -v   # 20 tests
-python -m src.make_figures   # regenerate the figures above
+                             # then decoded coordinates and the spatial statistics
+python -m pytest tests/ -v   # 42 tests
+python -m src.make_figures   # regenerate the figures above, including the maps
 ```
 
 ## Where this is going

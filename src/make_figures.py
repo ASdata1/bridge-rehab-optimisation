@@ -126,4 +126,7 @@ if __name__ == "__main__":
     FIG_DIR.mkdir(exist_ok=True)
     budget_vs_risk_reduction()
     optimal_vs_baseline()
+    # Imported here, not at the top: spatial_maps imports the colour constants from this module.
+    from src.spatial_maps import main as spatial_maps_main
+    spatial_maps_main()
     print(f"Wrote figures to {FIG_DIR}")
