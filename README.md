@@ -299,7 +299,11 @@ more fragmented.
 
 ## How to run
 
+Tested on a fresh install with Python 3.13. The raw data (`data/raw/RI25.csv`) is included.
+
 ```bash
+python -m venv .venv
+source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python -m src.run_all        # raw data -> scored bridges, optimised plan, baseline, budget sweep
                              # then decoded coordinates and the spatial statistics
